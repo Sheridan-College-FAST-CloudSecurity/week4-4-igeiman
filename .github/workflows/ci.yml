@@ -33,7 +33,7 @@ jobs:
     - name: Run Tests
       run: |
         pytest test_app.py
-  docker-build:
+  docker-build-and-unittest:
     needs: build-and-test  # Runs only after tests pass
     runs-on: ubuntu-latest
 
@@ -44,3 +44,6 @@ jobs:
     - name: Build Docker Image
       run: |
         docker build -t my-app:latest .
+    - name: Run Container Tests
+      run: |
+        docker run --rm my-app:latest pytest test_app.py
