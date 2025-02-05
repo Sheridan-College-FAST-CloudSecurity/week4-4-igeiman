@@ -1,0 +1,52 @@
+name: CI NEW Workflow
+
+on:
+  push:
+    branches: 
+      - '**' # Match all branches
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    # Add a matrix strategy for multiple Linux distributions
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-22.04, ubuntu-20.04]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest
+
+    - name: Run Tests
+      run: |
+        pytest test_app.py
+
+  # Docker Build job      
+  docker-build:
+    needs: build-and-test  # Runs only after tests pass
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Build Docker Image
+      run: |
+        docker build -t my-app:latest .
+    - name: Run Container Tests
+      run: |
+        docker run --rm my-app:latest pytest test_app.py
