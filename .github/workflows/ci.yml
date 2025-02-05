@@ -1,14 +1,19 @@
-name: CI Workflow
+name: CI Workflow Week5
 
 on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main ]
+    branches: '**'
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
+    # Add a matrix strategy for multiple Linux distributions
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-22.04, ubuntu-20.04]
 
     steps:
     - name: Checkout repository
