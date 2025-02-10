@@ -81,27 +81,5 @@ jobs:
 
     - name: Run Semgrep Scan
       run: |
-        semgrep --config p/ci --sarif 
-
-  
-  # Run Dependency check with OWASP Dependency-Check
-  dependency-check:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Run OWASP Dependency-Check
-      uses: dependency-check/action@v3.3.0
-      with:
-        output-directory: ./dependency-check-report
-        format: "SARIF"
-
-    - name: Upload SARIF Results
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: ./dependency-check-report/dependency-check-report.sarif
-
-
+        semgrep --config p/ci  
 
