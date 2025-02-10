@@ -50,3 +50,42 @@ jobs:
     - name: Run Container Tests
       run: |
         docker run --rm my-app:latest pytest test_app.py
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+        aws-region: "us-east-1"
+        
+    - name: Log in to Amazon ECR
+      run: |
+        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 711325057610.dkr.ecr.us-east-1.amazonaws.com
+    
+    - name: Push Docker Image to Amazon ECR
+      run: |
+        docker tag my-app:latest 711325057610.dkr.ecr.us-east-1.amazonaws.com/week4/session1:latest
+        docker push 711325057610.dkr.ecr.us-east-1.amazonaws.com/week4/session1:latest
+ 
+  # Perform SAST scan
+  sast-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install Semgrep
+      run: |
+        pip install semgrep
+
+    - name: Run Semgrep Scan
+      run: |
+        semgrep --config p/ci  --sarif --output semgrep_report.sarif
+     
+    - name: save report as pipeline artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: semgrep_report.sarif
+        path: semgrep_report.sarif
+
