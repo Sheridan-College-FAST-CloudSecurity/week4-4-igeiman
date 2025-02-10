@@ -81,12 +81,8 @@ jobs:
 
     - name: Run Semgrep Scan
       run: |
-        semgrep --config p/ci --sarif --output semgrep-results.sarif && cat semgrep-results.sarif
+        semgrep --config p/ci --sarif 
 
-    - name: Upload SARIF Results
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: semgrep-results.sarif
   
   # Run Dependency check with OWASP Dependency-Check
   dependency-check:
