@@ -84,7 +84,7 @@ jobs:
         semgrep --config p/ci  --sarif --output semgrep_report.sarif
      
     - name: save report as pipeline artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: semgrep_report.sarif
         path: semgrep_report.sarif
